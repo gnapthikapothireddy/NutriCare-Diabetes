@@ -6,7 +6,7 @@ A comprehensive diabetes management web application built with React + Vite (fro
 
 | Service | Public URL | Status |
 |---------|------------|--------|
-| **🖥️ Frontend App** | **https://frontend-rho-orpin-16.vercel.app** | ✅ Live on Vercel |
+| **🖥️ Frontend App** | **https://nutricare-diabetes.vercel.app** | ✅ Live on Vercel |
 | **⚙️ Backend API** | **https://api-production-e8000.up.railway.app/api** | ✅ Live on Railway |
 | **🔗 Health Check** | **https://api-production-e8000.up.railway.app/api/health** | ✅ Healthy |
 
