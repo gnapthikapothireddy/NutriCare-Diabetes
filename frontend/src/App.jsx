@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { LanguageProvider } from './context/LanguageContext';
 import { ThemeProvider } from './context/ThemeContext';
@@ -115,122 +116,125 @@ const AppLayout = ({ children }) => {
 };
 
 function App() {
+  const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || "your_google_client_id_here";
   return (
-    <Router>
-      <ThemeProvider>
-        <LanguageProvider>
-          <AuthProvider>
-            <NotificationProvider>
-              <Routes>
-                {/* Public Routes */}
-                <Route path="/" element={<LandingPage />} />
-                <Route path="/login" element={<Login />} />
+    <GoogleOAuthProvider clientId={googleClientId}>
+      <Router>
+        <ThemeProvider>
+          <LanguageProvider>
+            <AuthProvider>
+              <NotificationProvider>
+                <Routes>
+                  {/* Public Routes */}
+                  <Route path="/" element={<LandingPage />} />
+                  <Route path="/login" element={<Login />} />
 
-                {/* Protected Routes inside AppLayout */}
-                <Route path="/profile" element={
-                  <AppLayout>
-                    <Profile />
-                  </AppLayout>
-                } />
-                
-                <Route path="/dashboard" element={
-                  <AppLayout>
-                    <Dashboard />
-                  </AppLayout>
-                } />
+                  {/* Protected Routes inside AppLayout */}
+                  <Route path="/profile" element={
+                    <AppLayout>
+                      <Profile />
+                    </AppLayout>
+                  } />
+                  
+                  <Route path="/dashboard" element={
+                    <AppLayout>
+                      <Dashboard />
+                    </AppLayout>
+                  } />
 
-                <Route path="/sugar-tracker" element={
-                  <AppLayout>
-                    <BloodSugarTracker />
-                  </AppLayout>
-                } />
+                  <Route path="/sugar-tracker" element={
+                    <AppLayout>
+                      <BloodSugarTracker />
+                    </AppLayout>
+                  } />
 
-                <Route path="/meal-planner" element={
-                  <AppLayout>
-                    <MealPlanner />
-                  </AppLayout>
-                } />
+                  <Route path="/meal-planner" element={
+                    <AppLayout>
+                      <MealPlanner />
+                    </AppLayout>
+                  } />
 
-                <Route path="/food-database" element={
-                  <AppLayout>
-                    <FoodDatabase />
-                  </AppLayout>
-                } />
+                  <Route path="/food-database" element={
+                    <AppLayout>
+                      <FoodDatabase />
+                    </AppLayout>
+                  } />
 
-                <Route path="/food-scanner" element={
-                  <AppLayout>
-                    <FoodScanner />
-                  </AppLayout>
-                } />
+                  <Route path="/food-scanner" element={
+                    <AppLayout>
+                      <FoodScanner />
+                    </AppLayout>
+                  } />
 
-                <Route path="/barcode-scanner" element={
-                  <AppLayout>
-                    <BarcodeScanner />
-                  </AppLayout>
-                } />
+                  <Route path="/barcode-scanner" element={
+                    <AppLayout>
+                      <BarcodeScanner />
+                    </AppLayout>
+                  } />
 
-                <Route path="/medications" element={
-                  <AppLayout>
-                    <MedicationManager />
-                  </AppLayout>
-                } />
+                  <Route path="/medications" element={
+                    <AppLayout>
+                      <MedicationManager />
+                    </AppLayout>
+                  } />
 
-                <Route path="/exercise-tracker" element={
-                  <AppLayout>
-                    <ExerciseTracker />
-                  </AppLayout>
-                } />
+                  <Route path="/exercise-tracker" element={
+                    <AppLayout>
+                      <ExerciseTracker />
+                    </AppLayout>
+                  } />
 
-                <Route path="/health-insights" element={
-                  <AppLayout>
-                    <HealthInsights />
-                  </AppLayout>
-                } />
+                  <Route path="/health-insights" element={
+                    <AppLayout>
+                      <HealthInsights />
+                    </AppLayout>
+                  } />
 
-                <Route path="/health-reports" element={
-                  <AppLayout>
-                    <HealthReports />
-                  </AppLayout>
-                } />
+                  <Route path="/health-reports" element={
+                    <AppLayout>
+                      <HealthReports />
+                    </AppLayout>
+                  } />
 
-                <Route path="/doctor-dashboard" element={
-                  <AppLayout>
-                    <DoctorDashboard />
-                  </AppLayout>
-                } />
+                  <Route path="/doctor-dashboard" element={
+                    <AppLayout>
+                      <DoctorDashboard />
+                    </AppLayout>
+                  } />
 
-                <Route path="/caregiver" element={
-                  <AppLayout>
-                    <CaregiverDashboard />
-                  </AppLayout>
-                } />
+                  <Route path="/caregiver" element={
+                    <AppLayout>
+                      <CaregiverDashboard />
+                    </AppLayout>
+                  } />
 
-                <Route path="/sleep-tracker" element={
-                  <AppLayout>
-                    <SleepTracker />
-                  </AppLayout>
-                } />
+                  <Route path="/sleep-tracker" element={
+                    <AppLayout>
+                      <SleepTracker />
+                    </AppLayout>
+                  } />
 
-                <Route path="/emergency" element={
-                  <AppLayout>
-                    <Emergency />
-                  </AppLayout>
-                } />
+                  <Route path="/emergency" element={
+                    <AppLayout>
+                      <Emergency />
+                    </AppLayout>
+                  } />
 
-                <Route path="/admin" element={
-                  <AppLayout>
-                    <AdminPanel />
-                  </AppLayout>
-                } />
+                  <Route path="/admin" element={
+                    <AppLayout>
+                      <AdminPanel />
+                    </AppLayout>
+                  } />
 
-                {/* Fallback to landing */}
-                <Route path="*" element={<Navigate to="/" replace />} />
-              </Routes>
-            </NotificationProvider>
-          </AuthProvider>
-        </LanguageProvider>
-      </ThemeProvider>
-    </Router>
+                  {/* Fallback to landing */}
+                  <Route path="*" element={<Navigate to="/" replace />} />
+                </Routes>
+              </NotificationProvider>
+            </AuthProvider>
+          </LanguageProvider>
+        </ThemeProvider>
+      </Router>
+    </GoogleOAuthProvider>
   );
 }
 

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
-import { auth, googleProvider } from '../config/firebase';
+import { useGoogleLogin } from '@react-oauth/google';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { Lock, Mail, User, Phone, LogIn, ChevronRight } from 'lucide-react';
@@ -53,42 +52,46 @@ const Login = () => {
     }
   };
 
-  const handleGoogleLogin = async () => {
-    setError(null);
-    const firebaseApiKey = import.meta.env.VITE_FIREBASE_API_KEY;
-    if (!firebaseApiKey || firebaseApiKey === 'your_firebase_api_key_here') {
-      setError("⚠️ Firebase configuration is missing! Please configure VITE_FIREBASE_API_KEY, VITE_FIREBASE_AUTH_DOMAIN, VITE_FIREBASE_PROJECT_ID, and VITE_FIREBASE_APP_ID in your .env file.");
+  const triggerGoogleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      setError(null);
+      try {
+        // Fetch real user profile from Google UserInfo endpoint
+        const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+          headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
+        });
+        if (!res.ok) {
+          throw new Error('Failed to retrieve profile information from Google.');
+        }
+        const profile = await res.json();
+        
+        // profile contains: sub (UID), name, email, picture
+        const loggedUser = await googleLogin(profile.email, profile.name, profile.sub, profile.picture, tokenResponse.access_token);
+        if (loggedUser) {
+          if (loggedUser.profileCompleted) {
+            navigate('/dashboard');
+          } else {
+            navigate('/profile');
+          }
+        }
+      } catch (err) {
+        console.error("Google login error:", err);
+        setError("Failed to complete Google Sign-In. Please try again.");
+      }
+    },
+    onError: (err) => {
+      console.error("Google Sign-In Failed:", err);
+      setError("Google Sign-In failed or was cancelled. Please check your network or Client ID configuration.");
+    },
+  });
+
+  const handleGoogleLogin = () => {
+    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+    if (!clientId || clientId === 'your_google_client_id_here' || clientId === 'YOUR_GOOGLE_CLIENT_ID_HERE') {
+      setError("⚠️ Google OAuth Client ID is not configured! Please set VITE_GOOGLE_CLIENT_ID in your .env file with your Google Cloud / Firebase OAuth Client ID.");
       return;
     }
-
-    try {
-      const result = await signInWithPopup(auth, googleProvider);
-      const user = result.user;
-      
-      // Retrieve the Google credential (access token and/or ID Token)
-      const credential = GoogleAuthProvider.credentialFromResult(result);
-      const idToken = credential?.idToken || ''; // This is the Google ID Token
-
-      // Call our backend googleLogin endpoint with the user's details and ID Token (credential)
-      const loggedUser = await googleLogin(
-        user.email,
-        user.displayName,
-        user.uid, // Google UID/sub
-        user.photoURL,
-        idToken // Send ID Token as credential to be verified by backend
-      );
-
-      if (loggedUser) {
-        if (loggedUser.profileCompleted) {
-          navigate('/dashboard');
-        } else {
-          navigate('/profile');
-        }
-      }
-    } catch (err) {
-      console.error("Google Sign-In Error:", err);
-      setError(err.message || "Failed to complete Google Sign-In with Firebase. Please verify redirect URI and Origins configuration.");
-    }
+    triggerGoogleLogin();
   };
 
   return (
